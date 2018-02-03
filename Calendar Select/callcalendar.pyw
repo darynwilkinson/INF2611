@@ -1,5 +1,6 @@
 import sys
 from dispcalendar import *
+import datetime
 
 class MyForm(QtGui.QDialog):
     def __init__(self, parent=None):
@@ -7,6 +8,7 @@ class MyForm(QtGui.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         QtCore.QObject.connect(self.ui.calendarWidget, QtCore.SIGNAL('selectionChanged()'), self.dispdate)
+        self.ui.dateEdit.setDate(datetime.datetime.now() + datetime.timedelta(days = 1))
     
     def dispdate(self):
         self.ui.dateEdit.setDate(self.ui.calendarWidget.selectedDate())
