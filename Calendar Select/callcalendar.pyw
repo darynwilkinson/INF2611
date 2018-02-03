@@ -9,6 +9,7 @@ class MyForm(QtGui.QDialog):
         self.ui.setupUi(self)
         QtCore.QObject.connect(self.ui.calendarWidget, QtCore.SIGNAL('selectionChanged()'), self.dispdate)
         #self.ui.dateEdit.setDate(datetime.datetime.now() + datetime.timedelta(days = 1))
+        self.ui.dateEdit.setDisplayFormat('MMM d yyyy')
         self.ui.dateEdit.setDate(QtCore.QDate.currentDate().addDays(1))
     
     def dispdate(self):
