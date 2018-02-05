@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="icon images">
+    <file>print_pref.ico</file>
+    <file>sync.ico</file>
+  </qresource>
+</RCC>
