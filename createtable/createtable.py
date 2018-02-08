@@ -15,3 +15,11 @@ except pymysql.Error:
     sys.exit(1)
 cursor.close()
 conn.close()
+
+
+cursor.execute("""
+create table products(prod_id smallint NOT NULL,
+prod_name char(50),
+quantity smallint,
+price float)
+""")
