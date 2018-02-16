@@ -13,6 +13,7 @@ class MyForm(QtGui.QDialog):
         QtCore.QObject.connect(self.ui.calendarWidget, QtCore.SIGNAL('selectionChanged()'), self.dispdate)
         QtCore.QObject.connect(self.ui.calendarWidget_2, QtCore.SIGNAL('selectionChanged()'), self.dispdate2)
         QtCore.QObject.connect(self.ui.pushButton, QtCore.SIGNAL('clicked()'), self.addRecord)
+        QtCore.QObject.connect(self.ui.pushButton_2, QtCore.SIGNAL('clicked()'), self.updateRecord)
     
     def dispdate(self):
         self.ui.dateTimeEdit.setDate(self.ui.calendarWidget.selectedDate())
@@ -56,6 +57,44 @@ class MyForm(QtGui.QDialog):
         self.ui.streetnameEdit.clear()
         self.ui.housenumberEdit.clear()
         self.ui.textEdit.clear()
+    
+    def updateRecord(self):
+        conn = pymysql.connect(host="localhost", user="root", passwd="root", db="crime")
+        cursor = conn.cursor()
+        typ = str(self.ui.comboBox_2.currentText())
+        typ = cursor.execute("""
+        SELECT type_id FROM type WHERE name='%s'
+        """%(typ))
+        typ = cursor.fetchone()[0]
+        datetime = str(self.ui.dateTimeEdit_2.dateTime().toString())
+        if self.ui.radioButton_5.isChecked():
+            falsalm = 1
+        else:
+            falsalm = 0
+        street = str(self.ui.streetnameEdit_2.text())
+        strnum = int(self.ui.housenumberEdit_2.text())
+        if self.ui.radioButton_7.isChecked():
+            suscght = 1
+        else:
+            suscght = 0
+        comment = self.ui.textEdit_2.toPlainText()
+        area = str(self.ui.comboBox_5.currentText())
+        area = cursor.execute("""
+        SELECT area_id FROM area WHERE name='%s'
+        """%(area))
+        area = cursor.fetchone()[0]
+        pid = int(self.ui.lineEdit_2.text())
+        cursor.execute("""
+        UPDATE event set type_id=%d, time='%s', false_alarm=%d, loc_street='%s', loc_num=%d, suspect_caught=%d, comments='%s', area_id=%d where event_id=%d
+        """ %(typ, datetime, falsalm, street, strnum, suscght, comment, area, pid))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        self.ui.dateTimeEdit_2.setDateTime(QtCore.QDateTime.currentDateTime())
+        self.ui.streetnameEdit_2.clear()
+        self.ui.housenumberEdit_2.clear()
+        self.ui.textEdit_2.clear()
+        self.ui.lineEdit_2.clear()
 
 if __name__=="__main__":
     app = QtGui.QApplication(sys.argv)
