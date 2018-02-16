@@ -97,18 +97,23 @@ class MyForm(QtGui.QDialog):
         self.ui.textEdit_2.clear()
         self.ui.lineEdit_2.clear()
     
-    def createConnection():
-        db = QtSql.QSqlDatabase.addDatabase('QMYSQL')
-        db.setHostName('localhost')
-        db.setDatabaseName('crime')
-        db.setUserName('root')
-        db.setPassword('root')
-        db.open()
-        print (db.lastError().text())
-        return True
-    
     def searchRecords(self):
-        print('jazzy')
+        def createConnection():
+            db = QtSql.QSqlDatabase.addDatabase('QMYSQL')
+            db.setHostName('localhost')
+            db.setDatabaseName('crime')
+            db.setUserName('root')
+            db.setPassword('root')
+            db.open()
+            print (db.lastError().text())
+            return True
+        if not createConnection():
+            sys.exit(1)
+        self.model = QtSql.QSqlTableModel(self)
+        self.model.setTable("event")
+        self.model.setEditStrategy(QtSql.QSqlTableModel.OnManualSubmit)
+        self.model.select()
+        self.ui.tableView.setModel(self.model)
 
 if __name__=="__main__":
     app = QtGui.QApplication(sys.argv)
