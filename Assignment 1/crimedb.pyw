@@ -14,6 +14,7 @@ class MyForm(QtGui.QDialog):
         QtCore.QObject.connect(self.ui.calendarWidget_2, QtCore.SIGNAL('selectionChanged()'), self.dispdate2)
         QtCore.QObject.connect(self.ui.pushButton, QtCore.SIGNAL('clicked()'), self.addRecord)
         QtCore.QObject.connect(self.ui.pushButton_2, QtCore.SIGNAL('clicked()'), self.updateRecord)
+        QtCore.QObject.connect(self.ui.pushButton_3, QtCore.SIGNAL('clicked()'), self.searchRecords)
     
     def dispdate(self):
         self.ui.dateTimeEdit.setDate(self.ui.calendarWidget.selectedDate())
@@ -95,6 +96,19 @@ class MyForm(QtGui.QDialog):
         self.ui.housenumberEdit_2.clear()
         self.ui.textEdit_2.clear()
         self.ui.lineEdit_2.clear()
+    
+    def createConnection():
+        db = QtSql.QSqlDatabase.addDatabase('QMYSQL')
+        db.setHostName('localhost')
+        db.setDatabaseName('crime')
+        db.setUserName('root')
+        db.setPassword('root')
+        db.open()
+        print (db.lastError().text())
+        return True
+    
+    def searchRecords(self):
+        print('jazzy')
 
 if __name__=="__main__":
     app = QtGui.QApplication(sys.argv)
