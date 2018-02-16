@@ -125,6 +125,24 @@ class MyForm(QtGui.QDialog):
             if filt != "":
                 filt += "AND "
             filt += "suspect_caught=0 "
+        if self.ui.lineEdit.text() != "":
+            if filt != "":
+                filt += "AND "
+            filt += "event_id=" + self.ui.lineEdit.text() + " "
+        if self.ui.comboBox_3.currentText() != "":
+            if filt != "":
+                filt += "AND "
+            conn = pymysql.connect(host="localhost", user="root", passwd="root", db="crime")
+            cursor = conn.cursor()
+            typ = str(self.ui.comboBox_3.currentText())
+            typ = cursor.execute("""
+            SELECT type_id FROM type WHERE name='%s'
+            """%(typ))
+            typ = cursor.fetchone()[0]
+            cursor.close()
+            conn.close()
+            filt += "type_id=" + str(typ)
+        print(filt) 
         self.model.setFilter(filt)
         self.model.select()
         self.ui.tableView.setModel(self.model)
