@@ -112,6 +112,20 @@ class MyForm(QtGui.QDialog):
         self.model = QtSql.QSqlTableModel(self)
         self.model.setTable("event")
         self.model.setEditStrategy(QtSql.QSqlTableModel.OnManualSubmit)
+        filt = ""
+        if self.ui.radioButton_9.isChecked():
+            filt += "false_alarm=1 "
+        elif self.ui.radioButton_10.isChecked():
+            filt += "false_alarm=0 "
+        if self.ui.radioButton_11.isChecked():
+            if filt != "":
+                filt += "AND "
+            filt += "suspect_caught=1 "
+        elif self.ui.radioButton_12.isChecked():
+            if filt != "":
+                filt += "AND "
+            filt += "suspect_caught=0 "
+        self.model.setFilter(filt)
         self.model.select()
         self.ui.tableView.setModel(self.model)
 
