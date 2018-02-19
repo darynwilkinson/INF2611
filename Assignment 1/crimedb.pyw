@@ -6,7 +6,7 @@ import pymysql
 class MyForm(QtGui.QDialog):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        self.ui = Ui_Dialog()
+        self.ui = Ui_dialog()
         self.ui.setupUi(self)
         self.ui.dateTimeEdit.setDateTime(QtCore.QDateTime.currentDateTime())
         self.ui.dateTimeEdit_2.setDateTime(QtCore.QDateTime.currentDateTime())
@@ -15,6 +15,7 @@ class MyForm(QtGui.QDialog):
         QtCore.QObject.connect(self.ui.pushButton, QtCore.SIGNAL('clicked()'), self.addRecord)
         QtCore.QObject.connect(self.ui.pushButton_2, QtCore.SIGNAL('clicked()'), self.updateRecord)
         QtCore.QObject.connect(self.ui.pushButton_3, QtCore.SIGNAL('clicked()'), self.searchRecords)
+        QtCore.QObject.connect(self.ui.deleteButton, QtCore.SIGNAL('clicked()'), self.deleteRecord)
     
     def dispdate(self):
         self.ui.dateTimeEdit.setDate(self.ui.calendarWidget.selectedDate())
@@ -111,7 +112,7 @@ class MyForm(QtGui.QDialog):
             sys.exit(1)
         self.model = QtSql.QSqlTableModel(self)
         self.model.setTable("event")
-        self.model.setEditStrategy(QtSql.QSqlTableModel.OnManualSubmit)
+        self.model.setEditStrategy(QtSql.QSqlTableModel.OnFieldChange)
         filt = ""
         if self.ui.radioButton_9.isChecked():
             filt += "false_alarm=1 "
@@ -146,6 +147,19 @@ class MyForm(QtGui.QDialog):
         self.model.setFilter(filt)
         self.model.select()
         self.ui.tableView.setModel(self.model)
+    
+    def deleteRecord(self):
+        if str(self.ui.lineEdit_2.text()) != "":
+            pid = int(self.ui.lineEdit_2.text())
+            conn = pymysql.connect(host="localhost", user="root", passwd="root", db="crime")
+            cursor = conn.cursor()
+            cursor.execute("""
+            DELETE from event WHERE event_id=%d
+            """%(pid))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            self.ui.lineEdit_2.clear()
 
 if __name__=="__main__":
     app = QtGui.QApplication(sys.argv)
